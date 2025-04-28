@@ -16,5 +16,55 @@ namespace Auction_Management_System_Project
         {
             InitializeComponent();
         }
+        private void auctionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            AuctionManagementForm form = new AuctionManagementForm();
+            form.Show();
+        }
+
+        private void toolStripMenuItem3_Click(object sender, EventArgs e)
+        {
+            BidManagementForm form = new BidManagementForm();
+            form.Show();
+        }
+
+        private void registerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            RegisterForm form = new RegisterForm();
+            form.Show(this);
+        }
+
+        private void loginToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoginForm form = new LoginForm();
+            form.Show(this);
+        }
+
+        private void authenticationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void userFeaturesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripMenuItem4_Click(object sender, EventArgs e)
+        {
+            UserDashboardForm form = new UserDashboardForm();
+            form.Show();
+        }
+
+        private void toolStripMenuItem5_Click(object sender, EventArgs e)
+        {
+            WatchlistForm form = new WatchlistForm();
+            form.Show();
+        }
     }
 }
