@@ -42,7 +42,10 @@ namespace Auction_Management_System_Project
         private void loginToolStripMenuItem_Click(object sender, EventArgs e)
         {
             LoginForm form = new LoginForm();
-            form.Show(this);
+            if (form.ShowDialog(this) == DialogResult.OK)
+            {
+                userFeaturesToolStripMenuItem.Visible = true; // Make "User Features" visible after successful login
+            }
         }
 
         private void authenticationToolStripMenuItem_Click(object sender, EventArgs e)
@@ -66,5 +69,16 @@ namespace Auction_Management_System_Project
             WatchlistForm form = new WatchlistForm();
             form.Show();
         }
+
+       /* private void createAuctionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            createAuctioinForm form = new WatchlistForm();
+            form.Show();
+        }
+
+        private void viewAuctionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }*/
     }
 }

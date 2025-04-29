@@ -38,6 +38,8 @@
             this.userFeaturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
+            this.createAuctionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewAuctionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -66,6 +68,9 @@
             // 
             // toolStripMenuItem2
             // 
+            this.toolStripMenuItem2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.createAuctionToolStripMenuItem,
+            this.viewAuctionToolStripMenuItem});
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
             this.toolStripMenuItem2.Size = new System.Drawing.Size(235, 26);
             this.toolStripMenuItem2.Text = "Auction Management";
@@ -91,14 +96,14 @@
             // registerToolStripMenuItem
             // 
             this.registerToolStripMenuItem.Name = "registerToolStripMenuItem";
-            this.registerToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.registerToolStripMenuItem.Size = new System.Drawing.Size(146, 26);
             this.registerToolStripMenuItem.Text = "Register";
             this.registerToolStripMenuItem.Click += new System.EventHandler(this.registerToolStripMenuItem_Click);
             // 
             // loginToolStripMenuItem
             // 
             this.loginToolStripMenuItem.Name = "loginToolStripMenuItem";
-            this.loginToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.loginToolStripMenuItem.Size = new System.Drawing.Size(146, 26);
             this.loginToolStripMenuItem.Text = "Login";
             this.loginToolStripMenuItem.Click += new System.EventHandler(this.loginToolStripMenuItem_Click);
             // 
@@ -115,16 +120,30 @@
             // toolStripMenuItem4
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(224, 26);
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(198, 26);
             this.toolStripMenuItem4.Text = "User Dashboard";
             this.toolStripMenuItem4.Click += new System.EventHandler(this.toolStripMenuItem4_Click);
             // 
             // toolStripMenuItem5
             // 
             this.toolStripMenuItem5.Name = "toolStripMenuItem5";
-            this.toolStripMenuItem5.Size = new System.Drawing.Size(224, 26);
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(198, 26);
             this.toolStripMenuItem5.Text = "Watchlist";
             this.toolStripMenuItem5.Click += new System.EventHandler(this.toolStripMenuItem5_Click);
+            // 
+            // createAuctionToolStripMenuItem
+            // 
+            this.createAuctionToolStripMenuItem.Name = "createAuctionToolStripMenuItem";
+            this.createAuctionToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.createAuctionToolStripMenuItem.Text = "Create Auction";
+       //this     this.createAuctionToolStripMenuItem.Click += new System.EventHandler(this.createAuctionToolStripMenuItem_Click);
+            // 
+            // viewAuctionToolStripMenuItem
+            // 
+            this.viewAuctionToolStripMenuItem.Name = "viewAuctionToolStripMenuItem";
+            this.viewAuctionToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.viewAuctionToolStripMenuItem.Text = "View Auctions";
+            //this        this.viewAuctionToolStripMenuItem.Click += new System.EventHandler(this.viewAuctionToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -158,5 +177,7 @@
         private System.Windows.Forms.ToolStripMenuItem userFeaturesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem5;
+        private System.Windows.Forms.ToolStripMenuItem createAuctionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem viewAuctionToolStripMenuItem;
     }
 }
