@@ -112,19 +112,19 @@ namespace Auction_Management_System_Project
             }
         }
 
-        //private void registerUsernameTextBox_TextChanged(object sender, EventArgs e)
-        //{
-        //    // Optional
-        //}
+        private void registerUsernameTextBox_TextChanged(object sender, EventArgs e)
+        {
+            // Optional
+        }
 
-        //private void registerPasswordTextBox_TextChanged(object sender, EventArgs e)
-        //{
-        //    // Optional
-        //}
+        private void registerPasswordTextBox_TextChanged(object sender, EventArgs e)
+        {
+            // Optional
+        }
 
-        //private void registerConfirmPasswordTextBox_TextChanged(object sender, EventArgs e)
-        //{
-        //    // Optional
-        //}
+        private void registerConfirmPasswordTextBox_TextChanged(object sender, EventArgs e)
+        {
+            // Optional
+        }
     }
 }
