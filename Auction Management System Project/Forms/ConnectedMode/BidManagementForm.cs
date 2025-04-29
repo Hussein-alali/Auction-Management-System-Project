@@ -14,7 +14,7 @@ namespace Auction_Management_System_Project
 {
     public partial class BidManagementForm: Form
     {
-        string ordb = "Data Source = ORCL; User Id = scott; Password = tiger ";
+        string ordb = "Data Source = ORCL; User Id = scott; Password = scott ";
         OracleConnection conn;
         public BidManagementForm()
         {
