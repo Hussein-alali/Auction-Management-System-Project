@@ -7,14 +7,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Data.SqlClient;
-
+using Oracle.DataAccess.Client;
+using Oracle.DataAccess.Types;
 
 namespace Auction_Management_System_Project
 {
     public partial class LoginForm : Form
     {
-        private string connectionString = "YourConnectionStringHere"; // <--- Set your DB connection string here
+        string ordb = "Data Source = ORCL; User Id = scott; Password = scott ";
+        OracleConnection conn;
 
         public LoginForm()
         {
@@ -23,7 +24,15 @@ namespace Auction_Management_System_Project
 
         private void LoginForm_Load(object sender, EventArgs e)
         {
-            // Optional: Logic when form loads
+            conn = new OracleConnection(ordb);
+            try
+            {
+                conn.Open();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to connect to database: {ex.Message}", "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void loginButton_Click_1(object sender, EventArgs e)
@@ -45,24 +54,31 @@ namespace Auction_Management_System_Project
 
         private bool AuthenticateUser(string username, string password)
         {
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                string query = "SELECT COUNT(*) FROM Users WHERE Username = @Username AND Password = @Password";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@Username", username);
-                cmd.Parameters.AddWithValue("@Password", password);
+            OracleCommand cmd = new OracleCommand();
+            cmd.Connection = conn;
+            cmd.CommandText = "SELECT COUNT(*) FROM USERS WHERE USERNAME = :username AND PASSWORD = :password";
+            cmd.CommandType = CommandType.Text;
 
-                try
-                {
-                    conn.Open();
-                    int count = (int)cmd.ExecuteScalar();
-                    return count > 0;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return false;
-                }
+            cmd.Parameters.Add("username", username);
+            cmd.Parameters.Add("password", password);
+
+            try
+            {
+                int count = Convert.ToInt32(cmd.ExecuteScalar());
+                return count > 0;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
+
+        private void LoginForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (conn != null)
+            {
+                conn.Dispose();
             }
         }
 
