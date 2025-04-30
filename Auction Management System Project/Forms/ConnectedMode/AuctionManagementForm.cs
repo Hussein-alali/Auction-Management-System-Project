@@ -25,6 +25,18 @@ namespace Auction_Management_System_Project
         {
             conn = new OracleConnection(ordb);
             conn.Open();
+
+            OracleCommand cmd = new OracleCommand();
+            cmd.Connection = conn;
+            cmd.CommandText = "select AUCTIONID from AUCTIONS";
+            cmd.CommandType = CommandType.Text;
+
+            OracleDataReader dr = cmd.ExecuteReader();
+            while (dr.Read())
+            {
+                comboBox1.Items.Add(dr[0]);
+            }
+            dr.Close();
         }
 
         // Add Auction
@@ -32,50 +44,37 @@ namespace Auction_Management_System_Project
         {
             OracleCommand cmd = new OracleCommand();
             cmd.Connection = conn;
-            cmd.CommandText = "INSERT INTO AUCTIONS (AUCTIONID, TITLE, DESCRIPTION, STARTDATE, ENDDATE, STATUS, CREATORID) " +
-                              "VALUES (:id, :title, :desc, :start, :end, :status, :creator)";
-            cmd.Parameters.Add("id", Convert.ToInt32(textBox1.Text));
-            cmd.Parameters.Add("title", textBox2.Text);
-            cmd.Parameters.Add("desc", textBox3.Text);
-            cmd.Parameters.Add("start", string.IsNullOrWhiteSpace(textBox4.Text) ? (object)DBNull.Value : DateTime.Parse(textBox4.Text));
-            cmd.Parameters.Add("end", string.IsNullOrWhiteSpace(textBox5.Text) ? (object)DBNull.Value : DateTime.Parse(textBox5.Text));
-            cmd.Parameters.Add("status", textBox6.Text);
-            cmd.Parameters.Add("creator", string.IsNullOrWhiteSpace(textBox7.Text) ? (object)DBNull.Value : Convert.ToInt32(textBox7.Text));
 
             try
             {
-                int rows = cmd.ExecuteNonQuery();
-                MessageBox.Show($"{rows} Auction added.");
+                comboBox1.Items.Add(comboBox1.Text);
+                MessageBox.Show("A new actor added");
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message);
-            }
+    
         }
 
-        // Search by Title
-        private void button2_Click(object sender, EventArgs e)
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             OracleCommand cmd = new OracleCommand();
             cmd.Connection = conn;
-            cmd.CommandText = "SELECT * FROM AUCTIONS WHERE TITLE = :title";
-            cmd.Parameters.Add("title", textBox2.Text);
+            cmd.CommandText = "select title,description,startdate,enddate,status,creatorid from AUCTIONS where AUCTIONID =:id";
+            cmd.Parameters.Add("id", comboBox1.SelectedIndex.ToString());
+            cmd.CommandType = CommandType.Text;
 
-            OracleDataReader dr = cmd.ExecuteReader();
-            if (dr.Read())
+            OracleDataReader rd = cmd.ExecuteReader();
+            while (rd.Read())
             {
-                textBox1.Text = dr["AUCTIONID"].ToString();
-                textBox3.Text = dr["DESCRIPTION"].ToString();
-                textBox4.Text = dr["STARTDATE"].ToString();
-                textBox5.Text = dr["ENDDATE"].ToString();
-                textBox6.Text = dr["STATUS"].ToString();
-                textBox7.Text = dr["CREATORID"].ToString();
+                textBox2.Text = rd[0].ToString();
+                textBox3.Text = rd[1].ToString();
+                textBox4.Text = rd[2].ToString();
+                textBox5.Text = rd[3].ToString();
+                textBox6.Text = rd[4].ToString();
+                textBox7.Text = rd[5].ToString();
             }
-            else
+            }
+        private void AuctionManagementForm_Closed(object sender, FormClosedEventArgs e)
             {
-                MessageBox.Show("Auction not found.");
-            }
-            dr.Close();
+            conn.Dispose();
         }
     }
 }
