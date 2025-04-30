@@ -1,4 +1,4 @@
-﻿namespace Auction_Management_System_Project
+﻿ namespace Auction_Management_System_Project
 {
     partial class RegisterForm
     {
