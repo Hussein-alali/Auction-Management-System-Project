@@ -14,7 +14,7 @@ namespace Auction_Management_System_Project
 {
     public partial class AuctionManagementForm: Form
     {
-        string ordb = "Data Source = orcl; User Id = hr; Password = hr ";
+        string ordb = "Data Source = orcl; User Id = hr; Password = hr";
         OracleConnection conn;
         public AuctionManagementForm()
         {
@@ -45,12 +45,26 @@ namespace Auction_Management_System_Project
             OracleCommand cmd = new OracleCommand();
             cmd.Connection = conn;
 
-            try
+            cmd.CommandText = @"INSERT INTO auctions 
+                        (AUCTIONID, TITLE, DESCRIPTION, STARTDATE, ENDDATE, STATUS, CREATORID) 
+                        VALUES (:id, :title, :descr, :sdate, :edate, :status, :creator)";
+
+            cmd.Parameters.Add("id", comboBox1.Text);
+            cmd.Parameters.Add("title", textBox2.Text);
+            cmd.Parameters.Add("descr", textBox3.Text);      
+            cmd.Parameters.Add("sdate", Convert.ToDateTime(textBox4.Text));
+            cmd.Parameters.Add("edate", Convert.ToDateTime(textBox5.Text));
+            cmd.Parameters.Add("status", textBox6.Text);
+            cmd.Parameters.Add("creator", textBox7.Text);
+
+            cmd.CommandType = CommandType.Text;
+
+            int r = cmd.ExecuteNonQuery();
+            if (r > 0)
             {
                 comboBox1.Items.Add(comboBox1.Text);
-                MessageBox.Show("A new actor added");
+                MessageBox.Show("Auction added successfully");
             }
-    
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -58,7 +72,7 @@ namespace Auction_Management_System_Project
             OracleCommand cmd = new OracleCommand();
             cmd.Connection = conn;
             cmd.CommandText = "select title,description,startdate,enddate,status,creatorid from AUCTIONS where AUCTIONID =:id";
-            cmd.Parameters.Add("id", comboBox1.SelectedIndex.ToString());
+            cmd.Parameters.Add("id", comboBox1.SelectedIndex);
             cmd.CommandType = CommandType.Text;
 
             OracleDataReader rd = cmd.ExecuteReader();
@@ -71,9 +85,9 @@ namespace Auction_Management_System_Project
                 textBox6.Text = rd[4].ToString();
                 textBox7.Text = rd[5].ToString();
             }
-            }
+        }
         private void AuctionManagementForm_Closed(object sender, FormClosedEventArgs e)
-            {
+        {
             conn.Dispose();
         }
     }
