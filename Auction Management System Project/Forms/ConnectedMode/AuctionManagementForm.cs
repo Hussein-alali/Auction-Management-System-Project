@@ -14,7 +14,7 @@ namespace Auction_Management_System_Project
 {
     public partial class AuctionManagementForm: Form
     {
-        string ordb = "Data Source = orcl; User Id = hr; Password = hr";
+        string ordb = "Data Source = ORCL; User Id = scott; Password = scott ";
         OracleConnection conn;
         public AuctionManagementForm()
         {
@@ -72,19 +72,20 @@ namespace Auction_Management_System_Project
             OracleCommand cmd = new OracleCommand();
             cmd.Connection = conn;
             cmd.CommandText = "select title,description,startdate,enddate,status,creatorid from AUCTIONS where AUCTIONID =:id";
-            cmd.Parameters.Add("id", comboBox1.SelectedIndex);
+            cmd.Parameters.Add("id", comboBox1.SelectedItem.ToString()); 
             cmd.CommandType = CommandType.Text;
 
             OracleDataReader rd = cmd.ExecuteReader();
-            while (rd.Read())
+            if (rd.Read()) 
             {
                 textBox2.Text = rd[0].ToString();
                 textBox3.Text = rd[1].ToString();
-                textBox4.Text = rd[2].ToString();
-                textBox5.Text = rd[3].ToString();
+                textBox4.Text = ((DateTime)rd[2]).ToString("dd-MMM-yy");
+                textBox5.Text = ((DateTime)rd[3]).ToString("dd-MMM-yy");
                 textBox6.Text = rd[4].ToString();
                 textBox7.Text = rd[5].ToString();
             }
+            rd.Close();
         }
         private void AuctionManagementForm_Closed(object sender, FormClosedEventArgs e)
         {
