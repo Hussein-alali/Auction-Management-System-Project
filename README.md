@@ -1,1 +1,0 @@
-# Auction Management System Project
