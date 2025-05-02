@@ -102,6 +102,9 @@
     <EmbeddedResource Include="Forms\ConnectedMode\AuctionManagementForm.resx">
       <DependentUpon>AuctionManagementForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ConnectedMode\BidManagementForm.resx">
+      <DependentUpon>BidManagementForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>

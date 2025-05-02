@@ -1,95 +1,80 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Oracle.DataAccess.Client;
-using Oracle.DataAccess.Types;
 
 namespace Auction_Management_System_Project
 {
     public partial class LoginForm : Form
     {
-        string ordb = "Data Source = ORCL; User Id = scott; Password = scott ";
-        OracleConnection conn;
+        private OracleConnection connection;
+        private const string ConnectionString = "Data Source=ORCL;User Id=scott;Password=scott";
+        public string LoggedInUserId { get; private set; }
 
         public LoginForm()
         {
             InitializeComponent();
+            InitializeDatabaseConnection();
         }
 
-        private void LoginForm_Load(object sender, EventArgs e)
+        private void InitializeDatabaseConnection()
         {
-            conn = new OracleConnection(ordb);
             try
             {
-                conn.Open();
+                connection = new OracleConnection(ConnectionString);
+                connection.Open();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to connect to database: {ex.Message}", "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void loginButton_Click_1(object sender, EventArgs e)
-        {
-            string username = usernameTextBox.Text;
-            string password = passwordTextBox.Text;
-
-            if (AuthenticateUser(username, password))
-            {
-                MessageBox.Show("Login Successful!");
-                this.DialogResult = DialogResult.OK;
+                MessageBox.Show($"Database connection failed: {ex.Message}");
                 this.Close();
             }
-            else
-            {
-                MessageBox.Show("Invalid Username or Password!", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
-        private bool AuthenticateUser(string username, string password)
+        private void btnLogin_Click(object sender, EventArgs e)
         {
-            OracleCommand cmd = new OracleCommand();
-            cmd.Connection = conn;
-            cmd.CommandText = "SELECT COUNT(*) FROM USERS WHERE USERNAME = :username AND PASSWORD = :password";
-            cmd.CommandType = CommandType.Text;
-
-            cmd.Parameters.Add("username", username);
-            cmd.Parameters.Add("password", password);
+            if (connection?.State != ConnectionState.Open) return;
 
             try
             {
-                int count = Convert.ToInt32(cmd.ExecuteScalar());
-                return count > 0;
+                using (OracleCommand cmd = new OracleCommand(
+                    "SELECT USERID FROM USERS WHERE NAME = :name AND PASSWORD = :pwd", connection))
+                {
+                    cmd.Parameters.Add("name", OracleDbType.Varchar2).Value = txtUsername.Text;
+                    cmd.Parameters.Add("pwd", OracleDbType.Varchar2).Value = txtPassword.Text;
+
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        LoggedInUserId = result.ToString();
+                        this.DialogResult = DialogResult.OK;
+                        this.Close();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Invalid credentials");
+                    }
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
+                MessageBox.Show($"Error: {ex.Message}");
             }
         }
 
         private void LoginForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (conn != null)
+            if (connection != null && connection.State == ConnectionState.Open)
             {
-                conn.Dispose();
+                connection.Close();
+                connection.Dispose();
             }
         }
 
-        private void usernameTextBox_TextChanged(object sender, EventArgs e)
+        private void lnkRegister_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            // Optional
-        }
-
-        private void passwordTextBox_TextChanged(object sender, EventArgs e)
-        {
-            // Optional
+            new RegisterForm().Show();
+            this.Hide();
         }
     }
 }

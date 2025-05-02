@@ -1,130 +1,123 @@
 ﻿using System;
-using System.Data;
 using System.Windows.Forms;
 using Oracle.DataAccess.Client;
-using Oracle.DataAccess.Types;
+using System.Net.Mail;
+using System.Data;
 
 namespace Auction_Management_System_Project
 {
     public partial class RegisterForm : Form
     {
-        private string ordb = "Data Source = ORCL; User Id = scott; Password = scott";
-        private OracleConnection conn;
+        private OracleConnection connection;
+        private const string ConnectionString = "Data Source=ORCL;User Id=scott;Password=scott";
 
         public RegisterForm()
         {
             InitializeComponent();
+            InitializeDatabaseConnection(); // Initialize connection early
         }
 
-        private void RegisterForm_Load(object sender, EventArgs e)
+        private void InitializeDatabaseConnection()
         {
-            conn = new OracleConnection(ordb);
             try
             {
-                conn.Open();
+                connection = new OracleConnection(ConnectionString);
+                connection.Open();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Database connection error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Database connection failed: {ex.Message}");
+                this.Close(); // Close form if connection fails
+            }
+        }
+
+        private void registerButton_Click(object sender, EventArgs e)
+        {
+            // Check if connection is valid before using it
+            if (connection == null || connection.State != ConnectionState.Open)
+            {
+                MessageBox.Show("Database connection is not available");
+                return;
+            }
+
+            if (ValidateInputs())
+            {
+                RegisterUser();
+            }
+        }
+
+        private bool ValidateInputs()
+        {
+            // Existing validation logic
+            if (string.IsNullOrWhiteSpace(usernameTextBox.Text) ||
+                string.IsNullOrWhiteSpace(emailTextBox.Text) ||
+                string.IsNullOrWhiteSpace(passwordTextBox.Text))
+            {
+                MessageBox.Show("Please fill all fields");
+                return false;
+            }
+
+            if (passwordTextBox.Text != confirmPasswordTextBox.Text)
+            {
+                MessageBox.Show("Passwords do not match");
+                return false;
+            }
+
+            try
+            {
+                new MailAddress(emailTextBox.Text);
+                return true;
+            }
+            catch
+            {
+                MessageBox.Show("Invalid email format");
+                return false;
+            }
+        }
+
+        private void RegisterUser()
+        {
+            try
+            {
+                using (var cmd = new OracleCommand(
+                    "INSERT INTO USERS (USERID, NAME, EMAIL, PASSWORD) " +
+                    "VALUES (SEQ_USER_ID.NEXTVAL, :name, :email, :password)",
+                    connection))
+                {
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.Add("name", OracleDbType.Varchar2).Value = usernameTextBox.Text;
+                    cmd.Parameters.Add("email", OracleDbType.Varchar2).Value = emailTextBox.Text;
+                    cmd.Parameters.Add("password", OracleDbType.Varchar2).Value = passwordTextBox.Text;
+
+                    int rowsAffected = cmd.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        MessageBox.Show("Registration successful!");
+                        this.Close();
+                    }
+                }
+            }
+            catch (OracleException ex) when (ex.Number == 1)
+            {
+                MessageBox.Show("Username or email already exists");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
             }
         }
 
         private void RegisterForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (conn != null)
-                conn.Dispose();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            string username = registerUsernameTextBox.Text;
-            string password = registerPasswordTextBox.Text;
-            string confirmPassword = registerConfirmPasswordTextBox.Text;
-
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(confirmPassword))
+            if (connection != null)
             {
-                MessageBox.Show("All fields are required.", "Registration Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                if (connection.State == ConnectionState.Open)
+                    connection.Close();
+
+                connection.Dispose();
+                connection = null; // Clear reference
             }
-
-            if (password != confirmPassword)
-            {
-                MessageBox.Show("Passwords do not match.", "Registration Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (IsUsernameTaken(username))
-            {
-                MessageBox.Show("Username is already taken. Please choose a different username.", "Registration Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (SaveUserToDatabase(username, password))
-            {
-                MessageBox.Show("Registration Successful!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.Close();
-            }
-            else
-            {
-                MessageBox.Show("Registration Failed, please try again later.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private bool IsUsernameTaken(string username)
-        {
-            OracleCommand cmd = new OracleCommand();
-            cmd.Connection = conn;
-            cmd.CommandText = "SELECT COUNT(*) FROM USERS WHERE USERNAME = :username";
-            cmd.CommandType = CommandType.Text;
-            cmd.Parameters.Add("username", username);
-
-            try
-            {
-                int count = Convert.ToInt32(cmd.ExecuteScalar());
-                return count > 0;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error checking username: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return true; // Assume username taken if error occurs
-            }
-        }
-
-        private bool SaveUserToDatabase(string username, string password)
-        {
-            OracleCommand cmd = new OracleCommand();
-            cmd.Connection = conn;
-            cmd.CommandText = "INSERT INTO USERS (USERNAME, PASSWORD) VALUES (:username, :password)";
-            cmd.CommandType = CommandType.Text;
-
-            cmd.Parameters.Add("username", username);
-            cmd.Parameters.Add("password", password);
-
-            try
-            {
-                cmd.ExecuteNonQuery();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error saving user: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-        }
-
-        private void registerUsernameTextBox_TextChanged(object sender, EventArgs e)
-        {
-            // Optional
-        }
-
-        private void registerPasswordTextBox_TextChanged(object sender, EventArgs e)
-        {
-            // Optional
-        }
-
-        private void registerConfirmPasswordTextBox_TextChanged(object sender, EventArgs e)
-        {
-            // Optional
         }
     }
 }

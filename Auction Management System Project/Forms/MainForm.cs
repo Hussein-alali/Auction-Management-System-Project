@@ -12,6 +12,8 @@ namespace Auction_Management_System_Project
 {
     public partial class MainForm: Form
     {
+        private string loggedInUserId = null;
+
         public MainForm()
         {
             InitializeComponent();
@@ -23,15 +25,31 @@ namespace Auction_Management_System_Project
 
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
         {
-            AuctionManagementForm form = new AuctionManagementForm();
-            form.Show();
+            if (loggedInUserId != null)
+            {
+                AuctionManagementForm form = new AuctionManagementForm(loggedInUserId);
+                form.Show();
+            }
+            else
+            {
+                MessageBox.Show("Please log in first.");
+            }
         }
+
 
         private void toolStripMenuItem3_Click(object sender, EventArgs e)
         {
-            BidManagementForm form = new BidManagementForm();
-            form.Show();
+            if (!string.IsNullOrEmpty(loggedInUserId))  
+            {
+                int userId = Convert.ToInt32(loggedInUserId);  
+                new BidManagementForm(userId).Show();
+            }
+            else
+            {
+                MessageBox.Show("Please log in first.");
+            }
         }
+
 
         private void registerToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -41,12 +59,17 @@ namespace Auction_Management_System_Project
 
         private void loginToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            LoginForm form = new LoginForm();
-            if (form.ShowDialog(this) == DialogResult.OK)
+            using (LoginForm loginForm = new LoginForm())
             {
-                userFeaturesToolStripMenuItem.Visible = true; // Make "User Features" visible after successful login
+                if (loginForm.ShowDialog(this) == DialogResult.OK)
+                {
+                    loggedInUserId = loginForm.LoggedInUserId;
+                    userFeaturesToolStripMenuItem.Visible = true;
+                    MessageBox.Show("Login successful!");
+                }
             }
         }
+
 
         private void authenticationToolStripMenuItem_Click(object sender, EventArgs e)
         {
