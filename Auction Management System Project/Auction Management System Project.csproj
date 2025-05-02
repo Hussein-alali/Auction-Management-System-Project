@@ -105,6 +105,12 @@
     <EmbeddedResource Include="Forms\ConnectedMode\BidManagementForm.resx">
       <DependentUpon>BidManagementForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DisconnectedMode\UserDashboardForm.resx">
+      <DependentUpon>UserDashboardForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DisconnectedMode\WatchlistForm.resx">
+      <DependentUpon>WatchlistForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>

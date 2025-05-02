@@ -2,72 +2,53 @@
 using System.Data;
 using System.Windows.Forms;
 using Oracle.DataAccess.Client;
-using Oracle.DataAccess.Types;
 
 namespace Auction_Management_System_Project
 {
     public partial class UserDashboardForm : Form
     {
-        private string connectionString = "Data Source = ORCL; User Id = scott; Password = scott ";
-        private OracleDataAdapter dataAdapter;
-        private DataSet dataSet;
-        private DataGridView dataGViewUsers;
+        private string _userId;
+        private string connectionString = "Data Source=ORCL;User Id=scott;Password=scott;";
         private OracleConnection connection;
 
-
-
-
-        public UserDashboardForm()
+        public UserDashboardForm(string userId)
         {
             InitializeComponent();
+            _userId = userId;
         }
 
         private void UserDashboardForm_Load(object sender, EventArgs e)
         {
-            LoadUsers();
+            LoadUserBids();
         }
 
-        private void LoadUsers()
+        private void LoadUserBids()
         {
             try
             {
-                connection = new OracleConnection(connectionString);
-                connection.Open();
+                using (connection = new OracleConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = @"
+                        SELECT B.BidID, B.AuctionID, A.Title AS AuctionTitle, B.BidAmount, B.BidTime
+                        FROM Bids B
+                        JOIN Auctions A ON B.AuctionID = A.AuctionID
+                        WHERE B.UserID = :userId";
 
-                string query = "SELECT * FROM Users";
-                dataAdapter = new OracleDataAdapter(query, connection);
-                OracleCommandBuilder builder = new OracleCommandBuilder(dataAdapter);
+                    OracleCommand cmd = new OracleCommand(query, connection);
+                    cmd.Parameters.Add("userId", OracleDbType.Int32).Value = int.Parse(_userId);
 
-                dataSet = new DataSet();
-                dataAdapter.Fill(dataSet, "Users");
+                    OracleDataAdapter bidsAdapter = new OracleDataAdapter(cmd);
+                    DataTable bidsTable = new DataTable();
+                    bidsAdapter.Fill(bidsTable);
 
-                usersGridView.DataSource = dataSet.Tables["Users"];
-                usersGridView.Columns["UserID"].ReadOnly = true;
-
-
+                    bidsGridView.DataSource = bidsTable;
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error loading users: " + ex.Message);
+                MessageBox.Show("Error loading bids: " + ex.Message);
             }
         }
-
-        private void btnSaveChanges_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                OracleCommandBuilder builder = new OracleCommandBuilder(dataAdapter);
-                dataAdapter.UpdateCommand = builder.GetUpdateCommand();
-
-                dataAdapter.Update(dataSet, "Users");
-                MessageBox.Show("Changes saved successfully.");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error saving changes: " + ex.Message);
-            }
-        }
-
-
     }
 }

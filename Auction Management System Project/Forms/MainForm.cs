@@ -83,25 +83,38 @@ namespace Auction_Management_System_Project
 
         private void toolStripMenuItem4_Click(object sender, EventArgs e)
         {
-            UserDashboardForm form = new UserDashboardForm();
+            // Replace with the actual logged-in user ID
+            string userId = loggedInUserId; // Example: stored in a MainForm field/property
+
+            UserDashboardForm form = new UserDashboardForm(userId);
             form.Show();
         }
 
         private void toolStripMenuItem5_Click(object sender, EventArgs e)
         {
-            WatchlistForm form = new WatchlistForm();
-            form.Show();
+            if (!string.IsNullOrEmpty(loggedInUserId))
+            {
+                WatchlistForm form = new WatchlistForm(loggedInUserId); // مرر اليوزر آي دي هنا
+                form.Show();
+            }
+            else
+            {
+                MessageBox.Show("Please log in first.");
+            }
         }
 
-       /* private void createAuctionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            createAuctioinForm form = new WatchlistForm();
-            form.Show();
-        }
 
-        private void viewAuctionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
 
-        }*/
+
+        /* private void createAuctionToolStripMenuItem_Click(object sender, EventArgs e)
+         {
+             createAuctioinForm form = new WatchlistForm();
+             form.Show();
+         }
+
+         private void viewAuctionToolStripMenuItem_Click(object sender, EventArgs e)
+         {
+
+         }*/
     }
 }
